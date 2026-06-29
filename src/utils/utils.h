@@ -2,6 +2,7 @@
 
 #include "pch.h"
 #include <cstdint>
+#include <malloc.h>
 
 #ifndef _FILETIME
 typedef struct _FILETIME {
@@ -84,3 +85,23 @@ private:
 
 #define REPAK_BEGIN_NAMESPACE(n) namespace n {
 #define REPAK_END_NAMESPACE() }
+
+#if !defined(_MSC_VER)
+    static inline void* _aligned_malloc(std::size_t size, std::size_t alignment)
+    {
+        void* ptr = nullptr;
+
+        if (alignment < sizeof(void*))
+            alignment = sizeof(void*);
+
+        if (posix_memalign(&ptr, alignment, size) != 0)
+            return nullptr;
+
+        return ptr;
+    }
+
+    static inline void _aligned_free(void* ptr)
+    {
+        std::free(ptr);
+    }
+#endif
