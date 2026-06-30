@@ -9,7 +9,11 @@ project(
 
 cpp = meson.get_compiler('cpp')
 
-lib_d3d11 = cpp.find_library('dxvk_d3d11')
+if build_machine.system() == 'linux'
+  lib_d3d11 = cpp.find_library('dxvk_d3d11')
+else
+  lib_d311 = []
+endif
 
 zstd_sources = [
   'src/thirdparty/zstd/zdict.h',
